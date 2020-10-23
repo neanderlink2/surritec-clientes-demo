@@ -1,0 +1,5 @@
+/*******************************
+    User Variable Overrides
+*******************************/
+@primaryTextColor: #524c00;
+@background: #f5f2ea;
