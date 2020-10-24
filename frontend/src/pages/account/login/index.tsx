@@ -1,8 +1,8 @@
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import React, { useRef } from 'react';
-import { Link, Redirect, useHistory } from 'react-router-dom';
-import { Button, Form as FormUi, Grid, Header, Icon, Message, Segment } from 'semantic-ui-react';
+import { Redirect, useHistory } from 'react-router-dom';
+import { Button, Form as FormUi, Grid, Header, Segment } from 'semantic-ui-react';
 import InputField from '../../../components/Forms/input-field';
 import { useAuth } from '../../../contexts/AuthProvider';
 
@@ -32,10 +32,6 @@ export default function LoginPage() {
                         Entre em sua conta
                     </Header>
                     <FormUi size="large">
-                        <Button type="button" icon labelPosition='left' onClick={() => history.push("/")}>
-                            <Icon name='arrow left' />
-                            Voltar
-                        </Button>
                         <Segment stacked>
                             <InputField
                                 label="E-mail"
@@ -51,9 +47,6 @@ export default function LoginPage() {
                             </Button>
                         </Segment>
                     </FormUi>
-                    <Message>
-                        Novo no Ateliê Livre? <Link to="/register">Cadastre-se agora</Link>
-                    </Message>
                 </Grid.Column>
             </Grid>
         </Form>

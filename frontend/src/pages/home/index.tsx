@@ -1,69 +1,47 @@
-import React, { useState } from 'react';
-import { FiEye } from 'react-icons/fi';
-import { useHistory, useParams } from 'react-router-dom';
-import { Button, Icon, Message } from 'semantic-ui-react';
-import { useAuth } from '../../contexts/AuthProvider';
+import React from 'react';
+import { FiPlus } from 'react-icons/fi';
+import { Link, useHistory } from 'react-router-dom';
+import { Button, Header } from 'semantic-ui-react';
+import Allowed from '../../components/Allowed';
 import { useFetch } from '../../hooks/useFetch';
-import { useTypedSelector } from '../../hooks/useTypedSelector';
-import { PagedList } from '../../models/PagedList';
-import { Produto } from '../../models/Produto';
-import CardProduto from './card-produto';
-import { Container } from './styles';
+import { Cliente } from '../../models/Cliente';
+import { InlineContainer } from '../../styles/styles.global';
+import CardCliente from './card-cliente';
+import { CardContainer } from './styles';
 
 export default function HomePage() {
-    const [page, setPage] = useState(1);
+    const { isLoading, response, reload } = useFetch<Cliente[]>('/clientes');
     const history = useHistory();
-    const term = useTypedSelector(states => (
-        states.searchbar.search.term
-    ));
-    const { slugCategoria } = useParams<{ slugCategoria: string }>();
-
-    const { response, isLoading } = useFetch<PagedList<Produto>>(slugCategoria ?
-        `/produtos/categoria/${slugCategoria}/?search=${term}&page=1`
-        : `/produtos/?search=${term}&page=${page}`);
-
-    const { user, sair } = useAuth();
 
     if (isLoading) {
         return <span>Carregando...</span>
     }
-    return response?.results.length > 0 ? (
+    return (
         <div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                {response?.previous && (
-                    <Button type="button" icon labelPosition='left' onClick={() => setPage(oldValue => oldValue - 1)}>
-                        <Icon name='arrow left' />
-                        Voltar
+            <InlineContainer spaceBetween style={{ alignItems: 'center' }}>
+                <Header as="h2">Clientes cadastrados</Header>
+                <Allowed roles={["ROLE_ADMIN"]}>
+                    <Button as={Link} animated primary to="/clientes/form">
+                        <Button.Content visible>Novo</Button.Content>
+                        <Button.Content hidden>
+                            <FiPlus />
+                        </Button.Content>
                     </Button>
-                )}
-                {response?.next && (
-                    <Button type="button" icon labelPosition='left' onClick={() => setPage(oldValue => oldValue + 1)}>
-                        <Icon name='arrow right' />
-                        Próxima
-                    </Button>
-                )}
-            </div>
-            <Container>
-                {response?.results.map(produto => (
-                    <CardProduto
-                        imagem={produto.image}
-                        nome={produto.title}
-                        preco={parseFloat(produto.price)}
-                        onCardClick={() => history.push(`/produto/${produto.slug}`)}
+                </Allowed>
+            </InlineContainer>
+            <CardContainer>
+                {response.map(cliente => (
+                    <CardCliente
+                        id={cliente.id ?? 0}
+                        nome={cliente.nome}
+                        cidade={cliente.endereco.cidade}
+                        uf={cliente.endereco.uf}
+                        qtdeEmails={cliente.emails.length}
+                        qtdeTelefones={cliente.telefones.length}
+                        onSuccess={reload}
                     />
                 ))}
-            </Container>
+            </CardContainer>
         </div>
-
-    ) : (
-            <div>
-                <Message icon>
-                    <FiEye size={28} style={{ marginRight: 15 }} />
-                    <Message.Content>
-                        <Message.Header>Opa, parece que nada foi encontrado.</Message.Header>
-                    Nenhum produto foi encontrado, experimente alterar a sua busca ou procurar em outras categorias!
-                </Message.Content>
-                </Message>
-            </div>
-        )
+    )
 }

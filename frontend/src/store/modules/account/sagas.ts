@@ -1,45 +1,32 @@
 import { PayloadAction } from '@reduxjs/toolkit';
+import { AxiosError } from 'axios';
+import { toast } from 'react-toastify';
 import { all, call, put, takeLatest } from 'redux-saga/effects';
-import api, { formatError } from '../../../api';
-import { RegisterActions } from './actions/register';
+import api from '../../../api';
 import { LoginActions } from './actions/tryLogin';
-import { RegisterPayload, TryLoginPayload } from './types';
+import { TryLoginPayload } from './types';
 
 function* tryLogin({ payload }: PayloadAction<TryLoginPayload>) {
     const { login, password, onSuccess, onFailed } = payload;
     try {
-        const response = yield call(api.post, `/auth/token/login`, { email: login, password });
+        const response = yield call(api.post, `/auth/signin`, { nomeUsuario: login, senha: password });
         yield put(LoginActions.success(response.data));
         if (onSuccess) {
             onSuccess(response.data);
         }
     } catch (errors) {
-        const allErrors = formatError(errors);
-        yield put(LoginActions.failed(allErrors));
-        if (onFailed) {
-            onFailed(allErrors);
+        ///const allErrors = formatError(errors);        
+        const axiosError = errors as AxiosError;
+        if (axiosError && axiosError.response?.status === 400) {
+            toast.error("O usuário ou senha estão incorretos.");            
         }
-    }
-}
-
-function* register({ payload }: PayloadAction<RegisterPayload>) {
-    const { data, onSuccess, onFailed } = payload;
-    try {
-        const response = yield call(api.post, `/auth/users/`, data);
-        yield put(RegisterActions.success(response.data));
-        if (onSuccess) {
-            onSuccess(response.data);
-        }
-    } catch (errors) {
-        const allErrors = formatError(errors);
-        yield put(RegisterActions.failed(allErrors));
+        yield put(LoginActions.failed({}));
         if (onFailed) {
-            onFailed(allErrors);
+            onFailed();
         }
     }
 }
 
 export default all([
-    takeLatest(LoginActions.request.type, tryLogin),
-    takeLatest(RegisterActions.request.type, register)
+    takeLatest(LoginActions.request.type, tryLogin)
 ]);

@@ -44,11 +44,11 @@ create table if not exists tb_email_cliente(
 -- alter table tb_email_cliente 
 --     add primary key (id_cliente, email);
 
-create table if not exists tb_telefone_cliente(    
+create table if not exists tb_telefone_cliente(
+    id BIGINT AUTO_INCREMENT PRIMARY KEY, 
     id_cliente BIGINT NOT NULL,
     telefone VARCHAR(20) NOT NULL,   
-    tipo_telefone VARCHAR(20) NOT NULL,
-    primary key (id_cliente, telefone),
+    tipo_telefone VARCHAR(20) NOT NULL, 
     foreign key (id_cliente) references tb_clientes(id)
 );
 
@@ -63,6 +63,7 @@ create table if not exists tb_endereco_cliente (
     bairro VARCHAR(100) NOT NULL,
     cidade VARCHAR(120) NOT NULL,
     uf VARCHAR(50) NOT NULL,
+    numero VARCHAR(50) NOT NULL,
     complemento VARCHAR(250) NOT NULL,
     foreign key (id_cliente) references tb_clientes(id)
 );

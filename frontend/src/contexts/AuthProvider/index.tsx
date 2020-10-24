@@ -59,15 +59,15 @@ export default function AuthProvider({ children }: PropsWithChildren<{}>) {
     setIsLoading(true);
     login(nomeUsuario, senha,
       (data) => {
-        setToken(data.auth_token);
+        setToken(data.token);
         setTimeout(() => {
-          api.get<AuthProviderUser>('/auth/users/me')
+          api.get<AuthProviderUser>('/userinfo/me')
             .then((response) => {
               setUsuario(response.data);
               setIsLoading(false);
               toast.success(`Seja bem-vindo(a) ${response.data.first_name}`)
             })
-        }, 500);
+        }, 1000);
       },
       (error) => {
         setIsLoading(false);
@@ -76,21 +76,17 @@ export default function AuthProvider({ children }: PropsWithChildren<{}>) {
   }
 
   function sair() {
-    api.post<AuthProviderUser>('/auth/token/logout')
-      .then(() => {
-        setUsuario(null);
-        setToken(null);
-      }).catch(() => {
-        setUsuario(null);
-        setToken(null);
-      })
+    setUsuario(null);
+    setToken(null);
   }
 
   useEffect(() => {
-    setHydrating(false);
+    setTimeout(() => {
+      setHydrating(false);
+    }, 500);
   }, []);
 
-  if (hydrating) {
+  if (hydrating || isLoading) {
     return <Hydrating />
   }
 

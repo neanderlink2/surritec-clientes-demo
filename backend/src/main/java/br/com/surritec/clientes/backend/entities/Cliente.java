@@ -23,10 +23,9 @@ public class Cliente {
     private String nome;
     private String cpf;
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_endereco", referencedColumnName = "id")
+    @JoinColumn(name = "id_cliente", referencedColumnName = "id")
     private Endereco endereco;
-    @OneToMany(mappedBy = "cliente", fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Telefone> telefones;
     @ElementCollection
     private List<String> emails;

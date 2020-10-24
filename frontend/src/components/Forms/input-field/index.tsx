@@ -56,11 +56,13 @@ export default function InputField({
             //     return ref.inputRef.current.value;
             // },
             setValue(ref, value) {
-                setValor(value);
+                setValor(value ?? '');
+                ref.value = value ?? '';
             },
             clearValue(ref, value) {
                 //ref.value = value;
                 setValor(value !== 'undefined' ? value ?? '' : '');
+                ref.value = '';
             },
         });
     }, [fieldName, registerField]);
@@ -105,7 +107,7 @@ export function InputMaskField({
 
         setValor(tempValue);
         if (onChange) {
-            onChange(e);
+            onChange(value);
         }
     }
 
@@ -113,15 +115,18 @@ export function InputMaskField({
         registerField({
             name: fieldName,
             ref: inputRef.current,
-            //path: 'value',
-            getValue(ref) {
-                return ref.inputRef.current.value;
-            },
+            path: 'value',
+            // getValue(ref) {
+            //     return ref.inputRef.current.value;
+            // },
             setValue(ref, value) {
-                setValor(value);
+                setValor(value ?? '');
+                ref.value = value ?? '';
             },
             clearValue(ref, value) {
+                //ref.value = value;
                 setValor(value !== 'undefined' ? value ?? '' : '');
+                ref.value = '';
             },
         });
     }, [fieldName, registerField]);
@@ -135,10 +140,12 @@ export function InputMaskField({
             defaultValue={defaultValue}
             onChange={onChangeText}
         >
-            <Form.Field>
-                {label && <label>{label}</label>}
-                <input name={fieldName} defaultValue={defaultValue} {...rest} />
-            </Form.Field>
+            {() => (
+                <Form.Field>
+                    {label && <label>{label}</label>}
+                    <input name={fieldName} defaultValue={defaultValue} {...rest} />
+                </Form.Field>
+            )}
         </ReactInputMask>
     )
 }

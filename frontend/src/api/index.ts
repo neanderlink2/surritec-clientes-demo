@@ -3,15 +3,15 @@ import { toast } from 'react-toastify';
 import { ConfigInterface } from 'swr';
 import { HttpMethods } from '../models/Requests/RequestsMethods';
 
-export const URL_BASE_API = "https://atelie-livre.azurewebsites.net";
-const api = axios.create({ baseURL: URL_BASE_API, params: { format: 'json' } });
+export const URL_BASE_API = "http://localhost:8080/api";
+const api = axios.create({ baseURL: URL_BASE_API });
 api.interceptors.request.use(config => {
     const userToken = JSON.parse(localStorage.getItem("@app/userToken") ?? "");
     if (!userToken) {
         return config;
     }
 
-    config.headers.Authorization = `Token ${userToken}`;
+    config.headers.Authorization = `Bearer ${userToken}`;
     return config;
 });
 
@@ -19,7 +19,7 @@ async function dataFetcher<TResponse = any>(url: string, method: HttpMethods = "
     try {
         const response = await api.request({ method, url, params: { format: 'json' } });
         return response.data as TResponse;
-    } catch (error) {        
+    } catch (error) {
         console.error("ERRO NA REQUISIÇÃO: ", error);
         throw error;
     }

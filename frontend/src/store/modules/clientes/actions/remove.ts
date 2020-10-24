@@ -1,15 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { SaveCartPayload } from '../types';
+import { RemoveClientePayload } from '../types';
 
-const saveCartSlice = createSlice({
-    name: 'cart/save',
+const slice = createSlice({
+    name: 'clientes/remove',
     initialState: {
         isRequesting: false,
         successPayload: undefined,
         errors: [],
     },
     reducers: {
-        request: (state, action: PayloadAction<SaveCartPayload>) => {
+        request: (state, action: PayloadAction<RemoveClientePayload>) => {
             state.isRequesting = true;
         },
         success: (state, action) => {
@@ -25,5 +25,5 @@ const saveCartSlice = createSlice({
     },
 });
 
-export const SaveCartActions = saveCartSlice.actions;
-export default saveCartSlice.reducer;
+export const RemoveClienteActions = slice.actions;
+export default slice.reducer;

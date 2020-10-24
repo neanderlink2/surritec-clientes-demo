@@ -10,8 +10,8 @@ type FetchReturn<TResponse, TErrorResponse = any> = {
     reload: () => void,
 }
 
-export function useFetch<TResponse = any, TErrorResponse = any>(url: string): FetchReturn<TResponse, TErrorResponse> {
-    const { data, error } = useSWR<TResponse, AxiosError<TErrorResponse>>(url);
+export function useFetch<TResponse = any, TErrorResponse = any>(url?: string): FetchReturn<TResponse, TErrorResponse> {
+    const { data, error } = useSWR<TResponse, AxiosError<TErrorResponse>>(url ?? null);
     const { sair } = useAuth();
 
     if (error?.response?.status === 401) {
@@ -23,6 +23,6 @@ export function useFetch<TResponse = any, TErrorResponse = any>(url: string): Fe
         error,
         response: data as TResponse,
         isLoading: !data && error?.response?.status !== 404,
-        reload: () => mutate(url)
+        reload: () => mutate(url ?? null)
     };
 }
